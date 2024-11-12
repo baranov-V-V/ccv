@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Awesome go-echarts</title>
+    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
+</head>
+
+<body><div class="container">
+    <div class="item" id="qWyTvOqTqyWO" style="width:900px;height:500px;"></div>
+</div><script type="text/javascript">
+    "use strict";
+    let goecharts_qWyTvOqTqyWO = echarts.init(document.getElementById('qWyTvOqTqyWO'), "white", { renderer: "canvas" });
+    let option_qWyTvOqTqyWO = {"color":["#90EE90","#47d147","#ffd700","#ffa64d","#ff4d4d","#8b0000","#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{},"series":[{"name":"Very Low Risk","type":"scatter","data":null},{"name":"Low Risk","type":"scatter","data":null},{"name":"Medium Risk","type":"scatter","data":null},{"name":"High Risk","type":"scatter","data":null},{"name":"Very High Risk","type":"scatter","data":null},{"name":"Critical Risk","type":"scatter","data":null}],"title":{"show":false,"text":"Code Complexity vs Churn","left":"center","top":"0%"},"toolbox":{},"tooltip":{"show":true,"trigger":"item","formatter":function(params) {return 'Complexity: ' + params.value[0] +    '<br/>Churn: ' + params.value[1] +    '<br/>Files:<br/>' + params.value[2];}},"xAxis":[{"type":"value","name":"Complexity"}],"yAxis":[{"name":"Churn","type":"value"}]}
+
+    goecharts_qWyTvOqTqyWO.setOption(option_qWyTvOqTqyWO);
+</script>
+<style>
+    .container {margin-top:30px; display: flex;justify-content: center;align-items: center;}
+    .item {margin: auto;}
+</style>
+</body>
+</html>
