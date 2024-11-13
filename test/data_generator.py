@@ -1,6 +1,5 @@
 import argparse
 import csv
-import os
 import random
 
 # Set up argument parser
@@ -12,7 +11,6 @@ args = parser.parse_args()
 # Number of rows to generate
 num_rows = int(args.num)
 
-# Generate random data
 data = []
 for _ in range(num_rows):
     filepath = f"/path/to/file_{random.randint(1, 1000)}.txt"
@@ -20,8 +18,6 @@ for _ in range(num_rows):
     uint_val = random.randint(0, 2000)
     data.append([filepath, float_val, uint_val])
 
-# Write to CSV file
 with open(args.output_file, 'w', newline='') as f:
     writer = csv.writer(f)
-    # Write data rows
     writer.writerows(data)
