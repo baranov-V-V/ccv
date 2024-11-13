@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+
 	"github.com/baranov-V-V/ccv/pkg/plot"
 	"github.com/baranov-V-V/ccv/pkg/read"
 )
@@ -115,8 +116,8 @@ func avgComplexity(files read.FilesStat) []FileComplexity {
 
 // Skip file if it is not found in chunk or files, first goes over all churns
 // Matches based on filename
-func PreparePlotData(files read.FilesStat, churns []*read.ChurnChunk) []plot.ChartEntry {
-	result := make([]plot.ChartEntry, 0)
+func PreparePlotData(files read.FilesStat, churns []*read.ChurnChunk) []plot.ScatterEntry {
+	result := make([]plot.ScatterEntry, 0)
 
 	// Calculate average complexity for each file
 	fileComplexities := avgComplexity(files)
@@ -135,9 +136,9 @@ func PreparePlotData(files read.FilesStat, churns []*read.ChurnChunk) []plot.Cha
 			continue
 		}
 
-		entry := plot.ChartEntry{
+		entry := plot.ScatterEntry{
 			File:       fc.File,
-			Complexity: fc.Complexity,
+			ScatterData: plot.ScatterData{Complexity: fc.Complexity, Churn: 0},
 		}
 
 		switch Plot {

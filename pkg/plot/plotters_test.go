@@ -5,9 +5,11 @@ import (
 	"os"
 	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func readCSVToChartEntries(filepath string) ([]ChartEntry, error) {
+func readCSVToChartEntries(filepath string) ([]ScatterEntry, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
@@ -20,7 +22,7 @@ func readCSVToChartEntries(filepath string) ([]ChartEntry, error) {
 		return nil, err
 	}
 
-	entries := make([]ChartEntry, 0, len(records))
+	entries := make([]ScatterEntry, 0, len(records))
 	for _, record := range records {
 		complexity, err := strconv.ParseFloat(record[1], 64)
 		if err != nil {
@@ -32,10 +34,9 @@ func readCSVToChartEntries(filepath string) ([]ChartEntry, error) {
 			return nil, err
 		}
 
-		entry := ChartEntry{
-			File:       record[0],
-			Complexity: complexity,
-			Churn:      uint(churn),
+		entry := ScatterEntry{
+			File:        record[0],
+			ScatterData: ScatterData{Complexity: complexity, Churn: uint(churn)},
 		}
 		entries = append(entries, entry)
 	}
@@ -43,9 +44,9 @@ func readCSVToChartEntries(filepath string) ([]ChartEntry, error) {
 	return entries, nil
 }
 
-func createTestChart(t *testing.T, entries []ChartEntry, outputPath string) {
+func createTestChart(t *testing.T, entries []ScatterEntry, outputPath string) {
 	t.Helper()
-	err := CreateComplexityChurnChart(entries, outputPath)
+	err := CreateScatterChart(entries, NewRisksMapper(), outputPath)
 	if err != nil {
 		t.Fatalf("Failed to create chart: %v", err)
 	}
@@ -56,29 +57,26 @@ func createTestChart(t *testing.T, entries []ChartEntry, outputPath string) {
 	}
 }
 
-func TestCreateScatterChart200(t *testing.T) {
-	entries, err := readCSVToChartEntries("test/data/plot_200.csv")
-	if err != nil {
-		t.Fatalf("Failed to read CSV data: %v", err)
-	}
+var CSVDataDir = "../../test/data/"
+var OutputDir = "../../test/charts/"
 
-	createTestChart(t, entries, "test/charts/scatter-200.html")
+func TestCreateScatterChart200(t *testing.T) {
+	entries, err := readCSVToChartEntries(CSVDataDir+"plot_200.csv")
+	assert.NoError(t, err)
+
+	createTestChart(t, entries, OutputDir+"scatter-200.html")
 }
 
 func TestCreateScatterChart2000(t *testing.T) {
-	entries, err := readCSVToChartEntries("test/data/plot_2000.csv")
-	if err != nil {
-		t.Fatalf("Failed to read CSV data: %v", err)
-	}
+	entries, err := readCSVToChartEntries(CSVDataDir+"plot_2000.csv")
+	assert.NoError(t, err)
 
-	createTestChart(t, entries, "test/charts/scatter-2000.html")
+	createTestChart(t, entries, OutputDir+"scatter-2000.html")
 }
 
 func TestCreateScatterChart10SameValues(t *testing.T) {
-	entries, err := readCSVToChartEntries("test/data/plot_10-same.csv")
-	if err != nil {
-		t.Fatalf("Failed to read CSV data: %v", err)
-	}
+	entries, err := readCSVToChartEntries(CSVDataDir + "plot_10-same.csv")
+	assert.NoError(t, err)
 
-	createTestChart(t, entries, "test/charts/scatter-10-same.html")
+	createTestChart(t, entries, OutputDir+"scatter-10-same.html")
 }

@@ -1,9 +1,10 @@
 package process
 
 import (
+	"testing"
+
 	"github.com/baranov-V-V/ccv/pkg/plot"
 	"github.com/baranov-V-V/ccv/pkg/read"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -208,19 +209,18 @@ func TestPreparePlotData(t *testing.T) {
 		},
 	}
 
+	Plot = Changes
 	got := PreparePlotData(files, churns)
 
 	assert.Len(t, got, 2) // Only matching files should be included
 
-	assert.Contains(t, got, plot.ChartEntry{
+	assert.Contains(t, got, plot.ScatterEntry{
 		File:       "file1.go",
-		Complexity: 10, // (5 + 10 + 15) / 3
-		Churn:      100,
+		ScatterData: plot.ScatterData{Complexity: 10, Churn: 100}, // (5 + 10 + 15) / 3
 	})
 
-	assert.Contains(t, got, plot.ChartEntry{
+	assert.Contains(t, got, plot.ScatterEntry{
 		File:       "file2.go",
-		Complexity: 30, // (20 + 40) / 2
-		Churn:      50,
+		ScatterData: plot.ScatterData{Complexity: 30, Churn: 50}, // (20 + 40) / 2
 	})
 }

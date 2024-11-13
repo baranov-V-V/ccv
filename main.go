@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/baranov-V-V/ccv/pkg/plot"
 	"github.com/baranov-V-V/ccv/pkg/process"
 	"github.com/baranov-V-V/ccv/pkg/read"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -63,7 +64,7 @@ func main() {
 			entries := process.PreparePlotData(files, churns)
 
 			// Generate plot
-			if err := plot.CreateComplexityChurnChart(entries, outputFile); err != nil {
+			if err := plot.CreateScatterChart(entries, plot.NewRisksMapper(), outputFile); err != nil {
 				return fmt.Errorf("error creating chart: %w\n", err)
 			}
 
