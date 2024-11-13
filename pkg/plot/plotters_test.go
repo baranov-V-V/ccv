@@ -1,4 +1,4 @@
-package main
+package plot
 
 import (
 	"encoding/csv"
@@ -33,7 +33,7 @@ func readCSVToChartEntries(filepath string) ([]ChartEntry, error) {
 		}
 
 		entry := ChartEntry{
-			File:   record[0],
+			File:       record[0],
 			Complexity: complexity,
 			Churn:      uint(churn),
 		}

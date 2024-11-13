@@ -1,4 +1,4 @@
-package main
+package plot
 
 import (
 	"fmt"
@@ -76,7 +76,7 @@ func getRiskLevels() []RiskLevel {
 func CreateComplexityChurnChart(entries []ChartEntry, outputPath string) error {
 	show := true
 	riskLevels := getRiskLevels()
-	
+
 	riskMaps := make(map[string]map[string][]string)
 	for _, level := range riskLevels {
 		riskMaps[level.Name] = make(map[string][]string)
@@ -113,38 +113,38 @@ func CreateComplexityChurnChart(entries []ChartEntry, outputPath string) error {
 			}`),
 		}),
 		charts.WithXAxisOpts(opts.XAxis{
-			Name: "Complexity",
-			Type: "value",
+			Name:  "Complexity",
+			Type:  "value",
 			Scale: opts.Bool(true),
 		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Name: "Churn",
-			Type: "value",
+			Name:  "Churn",
+			Type:  "value",
 			Scale: opts.Bool(true),
 		}),
 		charts.WithColorsOpts(getRiskColors(riskLevels)),
 		/*
-		// Horizontal zoom slider
-		charts.WithDataZoomOpts(opts.DataZoom{
-			Type:       "slider",
-			Start:     0,
-			End:       100,
-			XAxisIndex: []int{0},
-		}),
-		// Vertical zoom slider
-		charts.WithDataZoomOpts(opts.DataZoom{
-			Type:       "slider",
-			Start:     0,
-			End:       100,
-			YAxisIndex: []int{0},
-			Orient:    "vertical",
-		}),
-		// Inside zoom for both axes
-		charts.WithDataZoomOpts(opts.DataZoom{
-			Type:  "inside",
-			Start: 0,
-			End:   100,
-		}),
+			// Horizontal zoom slider
+			charts.WithDataZoomOpts(opts.DataZoom{
+				Type:       "slider",
+				Start:     0,
+				End:       100,
+				XAxisIndex: []int{0},
+			}),
+			// Vertical zoom slider
+			charts.WithDataZoomOpts(opts.DataZoom{
+				Type:       "slider",
+				Start:     0,
+				End:       100,
+				YAxisIndex: []int{0},
+				Orient:    "vertical",
+			}),
+			// Inside zoom for both axes
+			charts.WithDataZoomOpts(opts.DataZoom{
+				Type:  "inside",
+				Start: 0,
+				End:   100,
+			}),
 		*/
 		charts.WithInitializationOpts(opts.Initialization{
 			Width:  "1200px",
@@ -179,7 +179,7 @@ func CreateComplexityChurnChart(entries []ChartEntry, outputPath string) error {
 		return err
 	}
 	defer f.Close()
-	
+
 	return scatter.Render(f)
 }
 

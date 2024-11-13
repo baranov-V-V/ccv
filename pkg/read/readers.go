@@ -1,4 +1,4 @@
-package main
+package read
 
 import (
 	"encoding/json"
@@ -23,7 +23,7 @@ type FunctionStat struct {
 	Package   []string
 	Name      string
 	Line      uint
-	Length 		uint
+	Length    uint
 	Compexity uint
 }
 
@@ -76,7 +76,7 @@ func parseItem(item lizardItem) (FunctionStat, error) {
 		Name:      name,
 		Package:   funcParts[:len(funcParts)-1],
 		Line:      uint(lineNum),
-		Length: 	 uint(item.Values[1]),	
+		Length:    uint(item.Values[1]),
 		Compexity: uint(item.Values[2]),
 	}, nil
 }

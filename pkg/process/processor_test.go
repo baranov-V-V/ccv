@@ -1,31 +1,33 @@
-package main
+package process
 
 import (
+	"github.com/baranov-V-V/ccv/pkg/plot"
+	"github.com/baranov-V-V/ccv/pkg/read"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestComplexityFilter_Filter(t *testing.T) {
-	files := FilesStat{
-		&FileStat{
+	files := read.FilesStat{
+		&read.FileStat{
 			Path: "file1.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func1", Compexity: 5},
 				{Name: "func2", Compexity: 10},
 				{Name: "func3", Compexity: 15},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path: "file2.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func4", Compexity: 3},
 				{Name: "func5", Compexity: 7},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path: "file3.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func6", Compexity: 2},
 			},
 		},
@@ -59,7 +61,7 @@ func TestComplexityFilter_Filter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			filter := ComplexityFilter{minComlexity: tt.minComplexity}
+			filter := ComplexityFilter{MinComplexity: tt.minComplexity}
 			got := filter.Filter(files)
 
 			assert.Len(t, got, tt.wantFiles)
@@ -78,10 +80,10 @@ func TestComplexityFilter_Filter(t *testing.T) {
 }
 
 func TestApplyFilters(t *testing.T) {
-	files := FilesStat{
-		&FileStat{
+	files := read.FilesStat{
+		&read.FileStat{
 			Path: "file1.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func1", Compexity: 5},
 				{Name: "func2", Compexity: 10},
 				{Name: "func3", Compexity: 15},
@@ -101,12 +103,12 @@ func TestApplyFilters(t *testing.T) {
 		},
 		{
 			name:      "single filter",
-			filters:   []FilesFilterFunc{ComplexityFilter{minComlexity: 7}.Filter},
+			filters:   []FilesFilterFunc{ComplexityFilter{MinComplexity: 7}.Filter},
 			wantFuncs: 2,
 		},
 		{
 			name:      "multiple filters",
-			filters:   []FilesFilterFunc{ComplexityFilter{minComlexity: 7}.Filter, ComplexityFilter{minComlexity: 12}.Filter},
+			filters:   []FilesFilterFunc{ComplexityFilter{MinComplexity: 7}.Filter, ComplexityFilter{MinComplexity: 12}.Filter},
 			wantFuncs: 1,
 		},
 	}
@@ -120,25 +122,25 @@ func TestApplyFilters(t *testing.T) {
 }
 
 func TestAvgComplexity(t *testing.T) {
-	files := FilesStat{
-		&FileStat{
+	files := read.FilesStat{
+		&read.FileStat{
 			Path: "file1.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func1", Compexity: 5},
 				{Name: "func2", Compexity: 10},
 				{Name: "func3", Compexity: 15},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path: "file2.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func4", Compexity: 20},
 				{Name: "func5", Compexity: 40},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path:      "empty.go",
-			Functions: []FunctionStat{},
+			Functions: []read.FunctionStat{},
 		},
 	}
 
@@ -158,31 +160,31 @@ func TestAvgComplexity(t *testing.T) {
 }
 
 func TestPreparePlotData(t *testing.T) {
-	files := FilesStat{
-		&FileStat{
+	files := read.FilesStat{
+		&read.FileStat{
 			Path: "file1.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func1", Compexity: 5},
 				{Name: "func2", Compexity: 10},
 				{Name: "func3", Compexity: 15},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path: "file2.go",
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func4", Compexity: 20},
 				{Name: "func5", Compexity: 40},
 			},
 		},
-		&FileStat{
+		&read.FileStat{
 			Path: "file3.go", // Will be skipped - no churn data
-			Functions: []FunctionStat{
+			Functions: []read.FunctionStat{
 				{Name: "func6", Compexity: 25},
 			},
 		},
 	}
 
-	churns := []*ChurnChunk{
+	churns := []*read.ChurnChunk{
 		{
 			File:    "file1.go",
 			Churn:   100,
@@ -210,14 +212,14 @@ func TestPreparePlotData(t *testing.T) {
 
 	assert.Len(t, got, 2) // Only matching files should be included
 
-	assert.Contains(t, got, ChartEntry{
-		File:   "file1.go",
+	assert.Contains(t, got, plot.ChartEntry{
+		File:       "file1.go",
 		Complexity: 10, // (5 + 10 + 15) / 3
 		Churn:      100,
 	})
 
-	assert.Contains(t, got, ChartEntry{
-		File:   "file2.go",
+	assert.Contains(t, got, plot.ChartEntry{
+		File:       "file2.go",
 		Complexity: 30, // (20 + 40) / 2
 		Churn:      50,
 	})

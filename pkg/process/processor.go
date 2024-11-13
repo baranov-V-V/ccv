@@ -1,7 +1,9 @@
-package main
+package process
 
 import (
 	"fmt"
+	"github.com/baranov-V-V/ccv/pkg/plot"
+	"github.com/baranov-V-V/ccv/pkg/read"
 )
 
 type ComplexityInputType int
@@ -34,30 +36,28 @@ const (
 
 var Plot = Commits
 
-// type FilesFilter func(files FilesStat) FilesStat
-
-// Place where it is used
+// FilesFilter Place where it is used
 type FilesFilter interface {
-	Filter(files FilesStat) FilesStat
+	Filter(files read.FilesStat) read.FilesStat
 }
 
 type ComplexityFilter struct {
-	minComlexity uint
+	MinComplexity uint
 }
 
-func (f ComplexityFilter) Filter(files FilesStat) FilesStat {
-	result := make(FilesStat, 0, len(files))
+func (f ComplexityFilter) Filter(files read.FilesStat) read.FilesStat {
+	result := make(read.FilesStat, 0, len(files))
 
 	for _, file := range files {
-		filteredFuncs := make([]FunctionStat, 0)
+		filteredFuncs := make([]read.FunctionStat, 0)
 		for _, fn := range file.Functions {
-			if fn.Compexity >= f.minComlexity {
+			if fn.Compexity >= f.MinComplexity {
 				filteredFuncs = append(filteredFuncs, fn)
 			}
 		}
 
 		if len(filteredFuncs) > 0 {
-			newFile := &FileStat{
+			newFile := &read.FileStat{
 				Path:      file.Path,
 				Functions: filteredFuncs,
 			}
@@ -68,9 +68,9 @@ func (f ComplexityFilter) Filter(files FilesStat) FilesStat {
 	return result
 }
 
-type FilesFilterFunc func(files FilesStat) FilesStat
+type FilesFilterFunc func(files read.FilesStat) read.FilesStat
 
-func ApplyFilters(files FilesStat, filters ...FilesFilterFunc) FilesStat {
+func ApplyFilters(files read.FilesStat, filters ...FilesFilterFunc) read.FilesStat {
 	result := files
 
 	for _, filter := range filters {
@@ -86,7 +86,7 @@ type FileComplexity struct {
 }
 
 // Calculates average complexity bases on functions in file: sum(funcComplexity) / funcCount
-func avgComplexity(files FilesStat) []FileComplexity {
+func avgComplexity(files read.FilesStat) []FileComplexity {
 	result := make([]FileComplexity, 0, len(files))
 
 	for _, file := range files {
@@ -115,14 +115,14 @@ func avgComplexity(files FilesStat) []FileComplexity {
 
 // Skip file if it is not found in chunk or files, first goes over all churns
 // Matches based on filename
-func PreparePlotData(files FilesStat, churns []*ChurnChunk) []ChartEntry {
-	result := make([]ChartEntry, 0)
+func PreparePlotData(files read.FilesStat, churns []*read.ChurnChunk) []plot.ChartEntry {
+	result := make([]plot.ChartEntry, 0)
 
 	// Calculate average complexity for each file
 	fileComplexities := avgComplexity(files)
 
 	// Create map for quick churn lookup
-	churnMap := make(map[string]*ChurnChunk)
+	churnMap := make(map[string]*read.ChurnChunk)
 	for _, churn := range churns {
 		churnMap[churn.File] = churn
 	}
@@ -135,7 +135,7 @@ func PreparePlotData(files FilesStat, churns []*ChurnChunk) []ChartEntry {
 			continue
 		}
 
-		entry := ChartEntry{
+		entry := plot.ChartEntry{
 			File:       fc.File,
 			Complexity: fc.Complexity,
 		}
